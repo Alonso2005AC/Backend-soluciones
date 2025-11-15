@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "cliente-crud-collection",
+		"name": "TiendaMass - Clientes CRUD",
+		"description": "Colección para gestionar clientes (GET, POST, PUT, DELETE)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Listar Todos los Clientes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes"
+					]
+				},
+				"description": "Obtiene la lista completa de clientes"
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Cliente por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"1"
+					]
+				},
+				"description": "Obtiene un cliente específico por su ID"
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Cliente",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juan\",\n    \"apellido\": \"Pérez\",\n    \"correo\": \"juan.perez@example.com\",\n    \"contraseña\": \"password123\",\n    \"telefono\": \"555-1234\",\n    \"direccion\": \"Calle Principal 123\",\n    \"rol\": \"cliente\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes"
+					]
+				},
+				"description": "Crea un nuevo cliente. El sistema validará que el correo no esté duplicado."
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Cliente",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nombre\": \"Juan Carlos\",\n    \"apellido\": \"Pérez López\",\n    \"correo\": \"juan.perez@example.com\",\n    \"contraseña\": \"newpassword456\",\n    \"telefono\": \"555-5678\",\n    \"direccion\": \"Avenida Secundaria 456\",\n    \"rol\": \"cliente\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"1"
+					]
+				},
+				"description": "Actualiza un cliente existente. Cambia el ID en la URL."
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Cliente",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"5"
+					]
+				},
+				"description": "Elimina un cliente por su ID. Cambia el número al final de la URL por el ID del cliente que quieres eliminar."
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Múltiples Clientes (Ejemplo)",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"10"
+					]
+				},
+				"description": "Ejemplo para eliminar otro cliente. Cambia el ID según necesites."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

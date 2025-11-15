@@ -2,6 +2,7 @@ package mass.backendmass.models;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Date;
 
 @Entity
 @Table(name = "detalle_venta")
@@ -22,6 +23,7 @@ public class DetalleVenta {
     private BigDecimal subtotal;
 
     private String lote;
+    private Date fecha_vencimiento;
 
     // Getters y Setters
     public int getId_detalle() { return id_detalle; }
@@ -44,4 +46,7 @@ public class DetalleVenta {
 
     public String getLote() { return lote; }
     public void setLote(String lote) { this.lote = lote; }
+
+    public Date getFecha_vencimiento() { return fecha_vencimiento; }
+    public void setFecha_vencimiento(Date fecha_vencimiento) { this.fecha_vencimiento = fecha_vencimiento; }
 }

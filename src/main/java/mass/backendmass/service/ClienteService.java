@@ -37,6 +37,11 @@ public class ClienteService {
     public ArrayList<Cliente> listaClientes() {
         return (ArrayList<Cliente>) clienteRepository.findAll();
     }
+    
+    // Buscar cliente por correo
+    public Cliente buscarPorCorreo(String correo) {
+        return clienteRepository.findByCorreo(correo);
+    }
 
     // Guardar cliente
     public Cliente guardarCliente(Cliente cliente) {

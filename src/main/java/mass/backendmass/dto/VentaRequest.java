@@ -39,16 +39,8 @@ public class VentaRequest {
     }
 
     public void setMetodo_pago(String metodo_pago) {
-        // Limpiar espacios y convertir a minúsculas
-        if (metodo_pago != null) {
-            metodo_pago = metodo_pago.trim().toLowerCase();
-        }
-        
-        // Validar que solo sea "tarjeta" o "agora"
-        if (metodo_pago != null && !metodo_pago.equals("tarjeta") && !metodo_pago.equals("agora")) {
-            throw new IllegalArgumentException("Método de pago inválido. Solo se acepta 'tarjeta' o 'agora'. Recibido: '" + metodo_pago + "'");
-        }
-        this.metodo_pago = metodo_pago;
+        // Solo limpiar espacios, la validación se hace en el Service
+        this.metodo_pago = metodo_pago != null ? metodo_pago.trim() : null;
     }
 
     public double getTotal() {

@@ -13,6 +13,8 @@ public class Cliente {
 
     private String nombre;
     private String apellido;
+    
+    @Column(unique = true, nullable = false)
     private String correo;
     
     @Column(name = "contrasena", nullable = false)

@@ -11,4 +11,7 @@ import java.util.List;
 public interface DetalleVentaRepository extends JpaRepository<DetalleVenta, Integer> {
     @Query("SELECT d FROM DetalleVenta d WHERE d.id_venta = :idVenta")
     List<DetalleVenta> findByIdVenta(@Param("idVenta") int idVenta);
+    
+    @Query("SELECT COALESCE(SUM(d.cantidad), 0) FROM DetalleVenta d WHERE d.id_producto = :idProducto")
+    Long countVentasByProductoId(@Param("idProducto") int idProducto);
 }

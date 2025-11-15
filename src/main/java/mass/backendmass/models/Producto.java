@@ -31,6 +31,9 @@ public class Producto {
     @Column(name = "imagen")
     private String imagen;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean activo = true;
+
     @Column(nullable = false)
     private Timestamp fecha_registro;
 
@@ -38,6 +41,7 @@ public class Producto {
     @PrePersist
     protected void onCreate() {
         this.fecha_registro = new Timestamp(System.currentTimeMillis());
+        this.activo = true;
     }
 
     // Getters y Setters
@@ -79,6 +83,9 @@ public class Producto {
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
 
     public Timestamp getFecha_registro() { return fecha_registro; }
     public void setFecha_registro(Timestamp fecha_registro) { this.fecha_registro = fecha_registro; }

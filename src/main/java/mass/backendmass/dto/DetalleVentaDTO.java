@@ -1,6 +1,7 @@
 package mass.backendmass.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.sql.Date;
 
 public class DetalleVentaDTO {
     @JsonProperty("id_producto")
@@ -14,6 +15,12 @@ public class DetalleVentaDTO {
     
     @JsonProperty("subtotal")
     private double subtotal;
+    
+    @JsonProperty("lote")
+    private String lote;
+    
+    @JsonProperty("fecha_vencimiento")
+    private Date fecha_vencimiento;
 
     // Constructor vacío
     public DetalleVentaDTO() {}
@@ -57,5 +64,21 @@ public class DetalleVentaDTO {
 
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public String getLote() {
+        return lote;
+    }
+
+    public void setLote(String lote) {
+        this.lote = lote;
+    }
+
+    public Date getFecha_vencimiento() {
+        return fecha_vencimiento;
+    }
+
+    public void setFecha_vencimiento(Date fecha_vencimiento) {
+        this.fecha_vencimiento = fecha_vencimiento;
     }
 }

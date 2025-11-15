@@ -1,0 +1,179 @@
+{
+	"info": {
+		"_postman_id": "productos-stock-collection",
+		"name": "TiendaMass - Ajustar Stock Productos",
+		"description": "Colección para gestionar y ajustar el stock de productos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Ver Todos los Productos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos"
+					]
+				},
+				"description": "Obtiene la lista completa de productos con sus stocks actuales"
+			},
+			"response": []
+		},
+		{
+			"name": "Ajustar Stock Máximo a 50",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos/ajustar-stock?maxStock=50",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"ajustar-stock"
+					],
+					"query": [
+						{
+							"key": "maxStock",
+							"value": "50",
+							"description": "Stock máximo permitido"
+						}
+					]
+				},
+				"description": "Ajusta todos los productos con stock mayor a 50 para que tengan máximo 50 unidades"
+			},
+			"response": []
+		},
+		{
+			"name": "Ajustar Stock Máximo a 30",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos/ajustar-stock?maxStock=30",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"ajustar-stock"
+					],
+					"query": [
+						{
+							"key": "maxStock",
+							"value": "30",
+							"description": "Stock máximo permitido"
+						}
+					]
+				},
+				"description": "Ajusta todos los productos con stock mayor a 30 para que tengan máximo 30 unidades"
+			},
+			"response": []
+		},
+		{
+			"name": "Ajustar Stock Máximo a 20",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos/ajustar-stock?maxStock=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"ajustar-stock"
+					],
+					"query": [
+						{
+							"key": "maxStock",
+							"value": "20",
+							"description": "Stock máximo permitido"
+						}
+					]
+				},
+				"description": "Ajusta todos los productos con stock mayor a 20 para que tengan máximo 20 unidades"
+			},
+			"response": []
+		},
+		{
+			"name": "Ver Producto Específico",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/productos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"1"
+					]
+				},
+				"description": "Obtiene un producto específico por su ID para verificar el stock"
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Stock Individual",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"stock\": 25\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/productos/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"productos",
+						"1"
+					]
+				},
+				"description": "Actualiza el stock de un producto individual. Cambia el ID en la URL y el valor de stock en el body."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

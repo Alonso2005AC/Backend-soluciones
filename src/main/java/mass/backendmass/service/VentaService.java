@@ -78,16 +78,35 @@ public class VentaService {
     public Map<String, Object> registrarVentaCompleta(VentaRequest request) {
         Map<String, Object> response = new HashMap<>();
         
-        // Validar método de pago (ya normalizado por el setter)
+        System.out.println("\n=== VALIDACIÓN EN SERVICE ===");
+        System.out.println("metodo_pago recibido: '" + request.getMetodo_pago() + "'");
+        System.out.println("metodo_pago es null: " + (request.getMetodo_pago() == null));
+        System.out.println("metodo_pago isEmpty: " + (request.getMetodo_pago() != null && request.getMetodo_pago().isEmpty()));
+        
+        // Validar método de pago
         String metodoPago = request.getMetodo_pago();
-        if (metodoPago == null || metodoPago.trim().isEmpty()) {
-            throw new IllegalArgumentException("Método de pago es obligatorio");
+        if (metodoPago == null) {
+            System.out.println("ERROR: metodo_pago es NULL");
+            throw new IllegalArgumentException("Método de pago es obligatorio (null)");
+        }
+        
+        if (metodoPago.trim().isEmpty()) {
+            System.out.println("ERROR: metodo_pago está vacío");
+            throw new IllegalArgumentException("Método de pago es obligatorio (vacío)");
         }
         
         metodoPago = metodoPago.trim().toLowerCase();
+        System.out.println("metodo_pago normalizado: '" + metodoPago + "'");
+        
         if (!metodoPago.equals("tarjeta") && !metodoPago.equals("agora")) {
+            System.out.println("ERROR: metodo_pago inválido: '" + metodoPago + "'");
+            System.out.println("  - Comparación con 'tarjeta': " + metodoPago.equals("tarjeta"));
+            System.out.println("  - Comparación con 'agora': " + metodoPago.equals("agora"));
             throw new IllegalArgumentException("Método de pago inválido. Solo se acepta 'tarjeta' o 'agora'. Recibido: '" + metodoPago + "'");
         }
+        
+        System.out.println("✓ Validación de metodo_pago exitosa");
+        System.out.println("=============================\n");
         
         // 1. Crear y guardar la venta
         Venta venta = new Venta();
@@ -123,6 +142,8 @@ public class VentaService {
             detalle.setCantidad(detalleDTO.getCantidad());
             detalle.setPrecio_unitario(BigDecimal.valueOf(detalleDTO.getPrecio_unitario()));
             detalle.setSubtotal(BigDecimal.valueOf(detalleDTO.getSubtotal()));
+            detalle.setLote(detalleDTO.getLote());
+            detalle.setFecha_vencimiento(detalleDTO.getFecha_vencimiento());
             
             detalleVentaRepository.save(detalle);
             System.out.println("Detalle guardado para producto ID: " + detalleDTO.getId_producto());
@@ -161,5 +182,15 @@ public class VentaService {
     private String generarNumeroFactura() {
         long timestamp = System.currentTimeMillis();
         return "F-" + timestamp;
+    }
+
+    // Obtener ventas de un cliente específico
+    public ArrayList<Venta> obtenerVentasPorCliente(int idCliente) {
+        return (ArrayList<Venta>) ventaRepository.findByIdCliente(idCliente);
+    }
+
+    // Obtener factura por ID de venta
+    public Optional<Factura> obtenerFacturaPorVenta(int idVenta) {
+        return facturaRepository.findByIdVenta(idVenta);
     }
 }
