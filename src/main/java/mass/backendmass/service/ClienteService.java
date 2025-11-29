@@ -45,6 +45,10 @@ public class ClienteService {
 
     // Guardar cliente
     public Cliente guardarCliente(Cliente cliente) {
+        if (!validarContrasena(cliente.getContraseña())) {
+            throw new RuntimeException("La contraseña no cumple los requisitos de seguridad");
+        }
+        cliente.setContraseña(passwordEncoder.encode(cliente.getContraseña()));
         return clienteRepository.save(cliente);
     }
 
@@ -61,6 +65,12 @@ public class ClienteService {
             c.setCorreo(clienteActualizado.getCorreo());
             c.setTelefono(clienteActualizado.getTelefono());
             c.setDireccion(clienteActualizado.getDireccion());
+            if (clienteActualizado.getContraseña() != null && !clienteActualizado.getContraseña().isEmpty()) {
+                if (!validarContrasena(clienteActualizado.getContraseña())) {
+                    throw new RuntimeException("La contraseña no cumple los requisitos de seguridad");
+                }
+                c.setContraseña(passwordEncoder.encode(clienteActualizado.getContraseña()));
+            }
             return clienteRepository.save(c);
         }).orElse(null);
     }
@@ -86,5 +96,11 @@ public class ClienteService {
             return true;
         }
         return false;
+    }
+
+    private boolean validarContrasena(String contrasena) {
+        // Mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return contrasena != null && contrasena.matches(regex);
     }
 }

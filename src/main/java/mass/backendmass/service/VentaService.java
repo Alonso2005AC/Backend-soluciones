@@ -142,8 +142,7 @@ public class VentaService {
             detalle.setCantidad(detalleDTO.getCantidad());
             detalle.setPrecio_unitario(BigDecimal.valueOf(detalleDTO.getPrecio_unitario()));
             detalle.setSubtotal(BigDecimal.valueOf(detalleDTO.getSubtotal()));
-            detalle.setLote(detalleDTO.getLote());
-            detalle.setFecha_vencimiento(detalleDTO.getFecha_vencimiento());
+            // No establecemos lote ni fecha_vencimiento porque no existen en la tabla
             
             detalleVentaRepository.save(detalle);
             System.out.println("Detalle guardado para producto ID: " + detalleDTO.getId_producto());

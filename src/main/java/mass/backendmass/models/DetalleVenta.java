@@ -22,7 +22,10 @@ public class DetalleVenta {
     @Column(nullable = false)
     private BigDecimal subtotal;
 
+    @Transient
     private String lote;
+    
+    @Transient
     private Date fecha_vencimiento;
 
     // Getters y Setters
