@@ -1,0 +1,96 @@
+<div class="register-shell">
+  <section class="register-form">
+    <h2>Crear Cuenta</h2>
+    <p class="subtitle">Regístrate para empezar a comprar o solicitar artículos frescos</p>
+
+    <form (ngSubmit)="register()" #registerForm="ngForm">
+      <div class="form-row">
+        <label>
+          Nombre
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" [(ngModel)]="nombre" name="nombre" #nombreCtrl="ngModel" required placeholder="Juan" />
+          </div>
+        </label>
+        <div class="field-error" *ngIf="nombreCtrl.invalid && (nombreCtrl.touched || registerForm.submitted)">
+          <small>El campo Nombre es obligatorio.</small>
+        </div>
+        <label>
+          Apellido
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user input-icon"></i>
+            <input type="text" [(ngModel)]="apellido" name="apellido" #apellidoCtrl="ngModel" required placeholder="Pérez" />
+          </div>
+        </label>
+        <div class="field-error" *ngIf="apellidoCtrl.invalid && (apellidoCtrl.touched || registerForm.submitted)">
+          <small>El campo Apellido es obligatorio.</small>
+        </div>
+      </div>
+
+      <label>
+        Correo Electrónico
+        <div class="input-wrapper">
+          <i class="fa-solid fa-envelope input-icon"></i>
+          <input type="email" [(ngModel)]="correo" name="correo" #correoCtrl="ngModel" required placeholder="ejemplo@correo.com" />
+        </div>
+      <div class="field-error" *ngIf="correoCtrl.invalid && (correoCtrl.touched || registerForm.submitted)">
+        <small *ngIf="correoCtrl.errors?.['required']">El campo Correo Electrónico es obligatorio.</small>
+        <small *ngIf="correoCtrl.errors?.['email']">Ingrese un correo válido.</small>
+      </div>
+      </label>
+
+      <label>
+        Contraseña
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock input-icon"></i>
+          <input type="password" [(ngModel)]="contrasena" name="contrasena" #contrasenaCtrl="ngModel" required placeholder="Mínimo 8 caracteres, mayúscula, número, especial" />
+        </div>
+        <div class="password-hint" [ngClass]="{ invalid: !isPasswordValid() && contrasena.length > 0, valid: isPasswordValid() }">
+          <span *ngIf="contrasena.length > 0 && !isPasswordValid()">
+            La contraseña debe tener mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial.
+          </span>
+          <span *ngIf="isPasswordValid()">
+            ✔ Contraseña segura
+          </span>
+        </div>
+      </label>
+
+      <label>
+        Teléfono
+        <div class="input-wrapper">
+          <i class="fa-solid fa-phone input-icon"></i>
+          <input type="tel" [(ngModel)]="telefono" name="telefono" placeholder="555-1234" />
+        </div>
+      </label>
+
+      <label>
+        Dirección de Entrega
+        <div class="input-wrapper">
+          <i class="fa-solid fa-location-dot input-icon"></i>
+          <input type="text" [(ngModel)]="direccion" name="direccion" placeholder="Calle Principal 123, Ciudad" />
+        </div>
+      </label>
+
+      <div *ngIf="contrasenaCtrl.invalid && (contrasenaCtrl.touched || registerForm.submitted)" class="field-error">
+        <small>El campo Contraseña es obligatorio.</small>
+      </div>
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading">
+          {{ loading ? 'Registrando...' : 'Registrarse' }}
+        </button>
+        <button type="button" class="secondary" (click)="goToLogin()">
+          Ya tengo cuenta
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="success" class="success-message">
+      {{ success }}
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  </section>
+</div>

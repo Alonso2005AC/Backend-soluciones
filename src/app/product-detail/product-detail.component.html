@@ -1,0 +1,137 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="product-detail-page">
+  <div class="container">
+    <button class="btn-back" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i> Volver al catálogo
+    </button>
+
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando producto...</p>
+    </div>
+
+    <div *ngIf="!loading && product" class="product-detail-content">
+      <nav class="breadcrumb">
+        <a (click)="goBack()">Catálogo</a>
+        <span>/</span>
+        <span class="current">{{ product.name }}</span>
+      </nav>
+      <!-- Sección principal del producto -->
+      <div class="product-main">
+        <div class="product-image-section">
+          <div class="main-image">
+            <img [src]="selectedImage" [alt]="product.name" />
+          </div>
+
+          <div class="thumbnails" role="list">
+            <!-- Si el backend devolviera varias imágenes usaríamos product.images; por ahora repetimos la principal -->
+            <div class="thumb" *ngFor="let t of [selectedImage, selectedImage, selectedImage]" (click)="selectImage(t)" tabindex="0" role="listitem" (keydown.enter)="selectImage(t)" aria-label="Ver imagen">
+              <img [src]="t" [alt]="product.name"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-info-section">
+          <div class="product-category-badge">{{ product.categoria || 'Sin categoría' }}</div>
+          <h1 class="product-title">{{ product.name }}</h1>
+          
+          <div class="product-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">(4.5 / 5) - 128 reseñas</span>
+          </div>
+
+          <div class="product-price-section">
+            <div class="price-main">S/ {{ product.price | number:'1.2-2' }}</div>
+            <div class="price-subtitle">Precio por unidad</div>
+
+            <div class="price-box">
+              <div class="price-row">
+                <div class="price-tag">S/ {{ product.price | number:'1.2-2' }}</div>
+                <div class="availability">{{ product.stock > 0 ? 'En stock' : 'Agotado' }}</div>
+              </div>
+              <div class="price-note">Envío gratis a partir de S/50 • Entrega 24-48h</div>
+              <div class="trust-badges">
+                <span class="badge">Pago seguro</span>
+                <span class="badge">Garantía 7 días</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-description">
+            <h3>Descripción</h3>
+            <p>{{ product.descripcion || 'Producto de excelente calidad. Perfecto para tu hogar y familia. Garantizamos frescura y el mejor precio del mercado.' }}</p>
+          </div>
+
+          <div class="product-details">
+            <div class="detail-item">
+              <span class="detail-label">Código:</span>
+              <span class="detail-value">{{ product.codigo_barras || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Stock disponible:</span>
+              <span class="detail-value" [class.low-stock]="product.stock < 10">
+                {{ product.stock }} unidades
+              </span>
+            </div>
+            <div class="detail-item" *ngIf="product.fecha_vencimiento">
+              <span class="detail-label">Fecha vencimiento:</span>
+              <span class="detail-value">{{ product.fecha_vencimiento }}</span>
+            </div>
+          </div>
+
+          <div class="product-actions">
+            <div class="quantity-selector">
+              <button class="qty-btn" (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <input type="number" [(ngModel)]="quantity" [min]="1" [max]="product.stock" class="qty-input" readonly />
+              <button class="qty-btn" (click)="increaseQuantity()" [disabled]="quantity >= product.stock">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+
+            <button class="btn-add-to-cart" (click)="addToCart()" [disabled]="product.stock === 0" aria-label="Agregar {{product.name}} al carrito">
+              <i class="fa-solid fa-shopping-cart"></i>
+              Agregar al carrito
+            </button>
+
+            <button class="btn-buy-now" (click)="buyNow()" [disabled]="product.stock === 0" aria-label="Comprar ahora {{product.name}}">
+              <i class="fa-solid fa-bolt"></i>
+              Comprar ahora
+            </button>
+          </div>
+
+          <div class="product-stock-alert" *ngIf="product.stock < 10 && product.stock > 0">
+            <i class="fa-solid fa-exclamation-triangle"></i>
+            ¡Solo quedan {{ product.stock }} unidades!
+          </div>
+
+          <div class="product-out-stock" *ngIf="product.stock === 0">
+            <i class="fa-solid fa-times-circle"></i>
+            Producto agotado
+          </div>
+        </div>
+      </div>
+
+      <!-- Productos relacionados -->
+      <div class="related-products-section" *ngIf="relatedProducts.length > 0">
+        <h2 class="section-title">Productos relacionados</h2>
+        <div class="related-products-grid">
+          <div class="related-product-card" *ngFor="let p of relatedProducts" (click)="goToProductDetail(p.id)">
+            <div class="related-product-image">
+              <img [src]="getProductImage(p)" [alt]="p.name" />
+            </div>
+            <div class="related-product-info">
+              <h4>{{ p.name }}</h4>
+              <div class="related-product-price">S/ {{ p.price | number:'1.2-2' }}</div>
+              <button class="btn-view-product">Ver detalles</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

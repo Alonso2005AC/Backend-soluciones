@@ -1,0 +1,384 @@
+<div class="admin-page">
+
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-content">
+      <h1>🛠️ Panel de Administrador</h1>
+      <div>
+        <button class="btn-logout" (click)="logout()">
+          <i class="fa-solid fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs (solo botones) -->
+  <nav class="admin-tabs">
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'productos'"
+      (click)="setActiveTab('productos')">
+      <i class="fa-solid fa-box"></i> Productos
+    </button>
+
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'estadisticas'"
+      (click)="setActiveTab('estadisticas')">
+      <i class="fa-solid fa-chart-bar"></i> Estadísticas
+    </button>
+
+    <button 
+      class="tab" 
+      [class.active]="activeTab === 'metas'"
+      (click)="setActiveTab('metas')">
+      <i class="fa-solid fa-bullseye"></i> Metas
+    </button>
+  </nav>
+
+  <!-- Content -->
+  <div class="admin-content">
+
+    <!-- TAB: Productos -->
+    <div *ngIf="activeTab === 'productos'" class="tab-content">
+      <div class="content-header">
+        <h2>Gestión de Productos</h2>
+        <button class="btn-add" (click)="openAddModal()">
+          <i class="fa-solid fa-plus"></i> Agregar Producto
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading">Cargando productos...</div>
+
+      <div class="products-table" *ngIf="!loading">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio (S/)</th>
+              <th>Stock</th>
+              <th>Ventas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products">
+              <td>{{ p.id }}</td>
+              <td class="product-name">{{ p.name }}</td>
+              <td>{{ getCategoryName(p.id_categoria) }}</td>
+              <td>
+                <input 
+                  type="number" 
+                  [(ngModel)]="p.price" 
+                  class="input-small"
+                  min="0"
+                  step="0.01"
+                />
+              </td>
+              <td>
+                <input 
+                  type="number" 
+                  [(ngModel)]="p.stock" 
+                  class="input-small"
+                  min="0"
+                />
+              </td>
+              <td class="sales-cell">{{ p.sales || 0 }}</td>
+              <td class="actions-cell">
+                <!-- Guardar cambios rápidos (inline) -->
+                <button class="btn-save" (click)="updateProduct(p)" title="Guardar cambios">
+                  <i class="fa-solid fa-save"></i>
+                </button>
+
+                <!-- Editar: abre modal en modo edición -->
+                <button class="btn-update" (click)="openAddModal(p)" title="Editar producto">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+
+                <!-- Actualizar imagen (prompt) -->
+                <button class="btn-update-img" (click)="updateProductImage(p)" title="Actualizar imagen">
+                  <i class="fa-solid fa-image"></i>
+                </button>
+
+                <!-- Eliminar producto -->
+                <button class="btn-delete" (click)="deleteProduct(p)" title="Eliminar producto">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: Estadísticas -->
+    <div *ngIf="activeTab === 'estadisticas'" class="tab-content">
+      <h2 style="margin: 0 0 16px 0;">📊 Dashboard de Estadísticas</h2>
+
+      <div *ngIf="loadingDashboard" class="loading">Cargando estadísticas...</div>
+
+      <div *ngIf="!loadingDashboard">
+                <!-- Ventas por Hora -->
+                <div class="dashboard-section" *ngIf="ventasHoraChartOption">
+                  <h3>⏰ Ventas por Hora</h3>
+                  <div class="filter-row">
+                    <label>
+                      Fecha:
+                      <input type="date" [(ngModel)]="fechaSeleccionadaParaHoras" (change)="loadVentasPorHora()" />
+                    </label>
+                  </div>
+                  <div class="chart-container">
+                    <div echarts [options]="ventasHoraChartOption" class="echart-container"></div>
+                  </div>
+                </div>
+        <!-- Inventario por Categoría -->
+        <div class="dashboard-section" *ngIf="inventarioChartOption && inventarioChartOption.series">
+          <h3>📊 Inventario por Categoría</h3>
+          <div class="chart-container">
+            <div echarts [options]="inventarioChartOption" class="echart-container"></div>
+          </div>
+        </div>
+
+        <!-- Indicadores -->
+        <div class="dashboard-section">
+          <h3>📦 Inventario: Indicadores Clave</h3>
+          <ul class="inventario-list">
+            <li *ngFor="let msg of inventarioMensajes">
+              <i class="fa-solid fa-circle-info" style="color:#956C12;margin-right:8px;"></i>
+              {{ msg }}
+            </li>
+            <li *ngIf="inventarioMensajes.length === 0">
+              <i class="fa-solid fa-circle-info" style="color:#956C12;margin-right:8px;"></i>
+              No hay alertas ni indicadores especiales de inventario.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Resumen General -->
+        <div class="dashboard-section" *ngIf="resumenGeneral">
+          <h3>📈 Resumen General</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="fa-solid fa-shopping-cart"></i></div>
+              <div class="stat-info">
+                <h3>Total Ventas</h3>
+                <p class="stat-value">{{ resumenGeneral.totalVentas || 0 }}</p>
+                <p class="stat-detail">unidades vendidas</p>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
+              <div class="stat-info">
+                <h3>Ingresos Totales</h3>
+                <p class="stat-value">S/ {{ (resumenGeneral.totalIngresos || 0).toFixed(2) }}</p>
+                <p class="stat-detail">en ventas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ventas (ejemplo con granularidad/drilldown control) -->
+        <div class="dashboard-section" *ngIf="ventasDelMes.length > 0">
+          <h3>📆 Ventas</h3>
+          <div class="filter-row">
+            <label>
+              Año:
+              <select [(ngModel)]="anioSeleccionado" (change)="onAnioChange()">
+                <option [value]="2024">2024</option>
+                <option [value]="2025">2025</option>
+                <option [value]="2026">2026</option>
+              </select>
+            </label>
+            <label>
+              Ver por:
+              <select [(ngModel)]="granularidadVentas" (change)="onGranularidadChange()">
+                <option value="mes">Mes</option>
+                <option value="dia">Día</option>
+              </select>
+            </label>
+            <button *ngIf="granularidadStack.length > 0" class="btn-cancel" (click)="volverNivelAnterior()">Volver</button>
+          </div>
+          <div class="chart-container">
+            <div echarts [options]="ventasChartOption" class="echart-container" (chartClick)="onVentasChartClick($event)"></div>
+          </div>
+        </div>
+
+        <!-- Ingresos mensuales -->
+        <div class="dashboard-section" *ngIf="ventasTotalMes.length > 0">
+          <h3>💵 Total en Dinero por Mes ({{ anioSeleccionado }})</h3>
+          <div class="chart-container">
+            <div echarts [options]="ventasTotalMesChartOption" class="echart-container"></div>
+          </div>
+        </div>
+
+        <!-- Categorías, Productos por categoría y Pagos -->
+        <div class="dashboard-section" *ngIf="categoriaMasVendida.length > 0">
+          <h3>🏆 Categorías Más Vendidas</h3>
+          <div class="chart-container">
+            <div echarts [options]="categoriasChartOption" class="echart-container"></div>
+          </div>
+        </div>
+
+        <div class="dashboard-section">
+          <h3>🎯 Productos Más Vendidos por Categoría</h3>
+          <div class="filter-row">
+            <label>
+              Categoría:
+              <select [(ngModel)]="categoriaSeleccionada" (change)="onCategoriaChange()">
+                <option [value]="0">Selecciona una categoría</option>
+                <option *ngFor="let cat of categories" [value]="cat.id_categoria">{{ cat.nombre_categoria }}</option>
+              </select>
+            </label>
+          </div>
+          <div class="chart-container" *ngIf="productosPorCategoria.length > 0">
+            <div echarts [options]="productosChartOption" class="echart-container"></div>
+          </div>
+          <p class="empty-state" *ngIf="categoriaSeleccionada > 0 && productosPorCategoria.length === 0">No hay productos vendidos en esta categoría</p>
+        </div>
+
+        <div class="dashboard-section" *ngIf="formaPagoMasUsada.length > 0">
+          <h3>💳 Formas de Pago Más Usadas</h3>
+          <div class="chart-container">
+            <div echarts [options]="pagosChartOption" class="echart-container"></div>
+          </div>
+        </div>
+
+        <!-- Mensaje cuando no hay datos -->
+        <div class="dashboard-section" *ngIf="!loadingDashboard && ventasDelMes.length === 0 && ventasTotalMes.length === 0 && categoriaMasVendida.length === 0 && formaPagoMasUsada.length === 0">
+          <div class="empty-state">
+            <i class="fa-solid fa-chart-line" style="font-size: 3rem; color: #9ca3af; margin-bottom: 16px;"></i>
+            <h3>No hay datos disponibles</h3>
+            <p>Los endpoints del dashboard no están respondiendo o no hay datos en el sistema.</p>
+            <p>Asegúrate de que el backend esté corriendo en <strong>http://localhost:8080</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Metas -->
+    <div *ngIf="activeTab === 'metas'" class="tab-content">
+      <div style="width:100%; min-height:380px; background:transparent;">
+        <div class="dashboard-section metas-card" style="width:100%; max-width:1100px; margin:0 auto; background:#f8fafc; border-radius:20px; box-shadow:0 4px 24px #0001; padding:36px 32px; text-align:center;">
+          <h3 style="margin-top:0; margin-bottom:28px; font-size:1.5em; letter-spacing:0.5px; color:#374151;">🎯 Metas de Ventas</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:36px; justify-content:center; align-items:stretch; width:100%;">
+            <!-- Meta Semanal -->
+            <div style="flex:1 1 320px; min-width:300px; max-width:420px; background:#fff; border-radius:14px; box-shadow:0 1px 6px #0001; padding:22px 18px 18px 18px; margin-bottom:0; display:flex; flex-direction:column; align-items:center;">
+              <div style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:10px;">
+                <span style="font-size:1.3em;">🗓️</span>
+                <span style="font-weight:600; color:#2563eb; font-size:1.08em;">Meta semanal</span>
+              </div>
+              <div style="color:#555; font-size:1em; margin-bottom:6px;">Meta: <strong>{{ metaSemana }}</strong> ventas</div>
+              <div style="color:#555; font-size:1em; margin-bottom:6px;">Realizadas: <strong>{{ ventasSemana }}</strong></div>
+              <div style="color:#555; font-size:1em; margin-bottom:10px;">Avance:</div>
+              <div class="progress-bar-container" style="background:#f3f4f6; border-radius:8px; height:22px; width:100%; margin:0 0 6px 0;">
+                <div class="progress-bar" [style.width]="porcentajeSemana + '%'" [style.background]="porcentajeSemana >= 100 ? '#10b981' : '#f59e0b'" style="height:22px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; font-size:0.98em; transition:width 0.5s;">
+                  {{ ventasSemana }} / {{ metaSemana }} ventas
+                </div>
+              </div>
+              <span *ngIf="porcentajeSemana >= 100" style="color:#10b981; font-weight:bold;">¡Meta semanal alcanzada! 🎉</span>
+            </div>
+
+            <!-- Meta Mensual -->
+            <div style="flex:1 1 320px; min-width:300px; max-width:420px; background:#fff; border-radius:14px; box-shadow:0 1px 6px #0001; padding:22px 18px 18px 18px; margin-bottom:0; display:flex; flex-direction:column; align-items:center;">
+              <div style="display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:10px;">
+                <span style="font-size:1.3em;">📅</span>
+                <span style="font-weight:600; color:#7c3aed; font-size:1.08em;">Meta mensual</span>
+              </div>
+              <div style="color:#555; font-size:1em; margin-bottom:6px;">Meta: <strong>{{ metaMes }}</strong> ventas</div>
+              <div style="color:#555; font-size:1em; margin-bottom:6px;">Realizadas: <strong>{{ ventasMes }}</strong></div>
+              <div style="color:#555; font-size:1em; margin-bottom:10px;">Avance:</div>
+              <div class="progress-bar-container" style="background:#f3f4f6; border-radius:8px; height:22px; width:100%; margin:0 0 6px 0;">
+                <div class="progress-bar" [style.width]="porcentajeMes + '%'" [style.background]="porcentajeMes >= 100 ? '#10b981' : '#3b82f6'" style="height:22px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; font-size:0.98em; transition:width 0.5s;">
+                  {{ ventasMes }} / {{ metaMes }} ventas
+                </div>
+              </div>
+              <span *ngIf="porcentajeMes >= 100" style="color:#10b981; font-weight:bold;">¡Meta mensual alcanzada! 🎉</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- /.admin-content -->
+
+  <!-- Modal (Agregar / Editar - único) -->
+  <div class="modal-backdrop" *ngIf="showAddModal" (click)="closeAddModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto' }}</h3>
+        <button class="close-btn" (click)="closeAddModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <label>
+          Nombre del producto *
+          <input type="text" [(ngModel)]="newProduct.nombre" placeholder="Ej: Tomate" required />
+        </label>
+
+        <label>
+          Código de barras
+          <input type="text" [(ngModel)]="newProduct.codigo_barras" placeholder="7750101000011" />
+        </label>
+
+        <label>
+          Categoría *
+          <select [(ngModel)]="newProduct.id_categoria" required>
+            <option [value]="0">Selecciona una categoría</option>
+            <option *ngFor="let cat of categories" [value]="cat.id_categoria">{{ cat.nombre_categoria }}</option>
+          </select>
+        </label>
+
+        <div class="form-row">
+          <label>
+            Precio (S/) *
+            <input type="number" [(ngModel)]="newProduct.precio" min="0" step="0.01" required />
+          </label>
+
+          <label>
+            Stock *
+            <input type="number" [(ngModel)]="newProduct.stock" min="0" required />
+          </label>
+        </div>
+
+        <label>
+          Imagen URL (Imgur, etc.)
+          <input type="text" [(ngModel)]="newProduct.imagen" placeholder="https://i.imgur.com/ejemplo.jpg" />
+          <small style="color: #666; font-size: 0.9em;">Puedes subir una imagen a Imgur y pegar la URL aquí</small>
+        </label>
+
+        <div class="form-row">
+          <label>
+            Lote
+            <input type="text" [(ngModel)]="newProduct.lote" placeholder="L-MAS-001" />
+          </label>
+
+          <label>
+            Fecha de Ingreso
+            <input type="date" [(ngModel)]="newProduct.fecha_registro" />
+          </label>
+        </div>
+
+        <label>
+          Fecha de Vencimiento
+          <input type="date" [(ngModel)]="newProduct.fecha_vencimiento" />
+        </label>
+
+        <label>
+          Descripción
+          <textarea [(ngModel)]="newProduct.descripcion" rows="3" placeholder="Descripción del producto"></textarea>
+        </label>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeAddModal()">Cancelar</button>
+        <button class="btn-submit" (click)="addProduct()">
+          {{ editingProduct ? 'Guardar Cambios' : 'Agregar Producto' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- /.admin-page -->

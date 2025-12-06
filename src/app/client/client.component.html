@@ -1,0 +1,167 @@
+<app-nav-bar></app-nav-bar>
+<div class="products-page">
+  <aside class="filters-card">
+    <h3>Filtros</h3>
+    
+    <div class="filter-section">
+      <label class="filter-label">Categoría</label>
+      <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()" class="filter-select">
+        <option [value]="0">Todas las categorías</option>
+        <option *ngFor="let cat of categories" [value]="cat.id_categoria">
+          {{ cat.nombre_categoria }}
+        </option>
+      </select>
+    </div>
+    
+    <div class="filter-section">
+      <label class="filter-label">Rango de precios</label>
+      <input 
+        type="range" 
+        [(ngModel)]="priceRange" 
+        [min]="minPrice" 
+        [max]="maxPrice" 
+        (input)="onPriceChange()" 
+        class="price-slider"
+      />
+      <div class="price-range-display">
+        <span>S/{{ minPrice }}</span>
+        <span>S/{{ priceRange | number:'1.0-0' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <!-- Carrusel Navideño Bootstrap -->
+    <div class="container mt-4 mb-4">
+      <div class="alert alert-success text-center" role="alert" style="font-size:1.5rem;">
+        <strong>¡Especial de Navidad!</strong> Productos destacados para celebrar en familia:
+      </div>
+      <div id="carouselNavidad" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://i.ibb.co/Q3rL82pr/tienda-003842-d6ab57e27615481d6c2b01b3b087fe891c2ee860-producto-large-85.png" class="d-block w-100" alt="Panetón D’Onofrio Clásico 900g" style="max-height:350px;object-fit:contain;cursor:pointer;" (click)="goToProductDetail(62)">
+            <div class="carousel-caption d-block bg-dark bg-opacity-50 rounded">
+              <h5>Panetón D’Onofrio Clásico 900g</h5>
+              <p>Panetón clásico de D’Onofrio elaborado con una receta tradicional peruana.</p>
+              <p><strong>Precio: S/26.90</strong></p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://i.ibb.co/gFVBJ5mN/969673.jpg" class="d-block w-100" alt="Panetón Gloria 900g" style="max-height:350px;object-fit:contain;cursor:pointer;" (click)="goToProductDetail(63)">
+            <div class="carousel-caption d-block bg-dark bg-opacity-50 rounded">
+              <h5>Panetón Gloria 900g</h5>
+              <p>Panetón Gloria de masa esponjosa con frutas confitadas y uvas pasas. Empaque rojo característico de la marca.</p>
+              <p><strong>Precio: S/24.90</strong></p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://i.ibb.co/Xr2PZgZf/20100883.jpg" class="d-block w-100" alt="Chocolate en Taza Sol del Cusco 90g (Nestlé)" style="max-height:350px;object-fit:contain;cursor:pointer;" (click)="goToProductDetail(64)">
+            <div class="carousel-caption d-block bg-dark bg-opacity-50 rounded">
+              <h5>Chocolate en Taza Sol del Cusco 90g (Nestlé)</h5>
+              <p>Chocolate en taza Sol del Cusco de Nestlé, hecho con cacao peruano de alta calidad.</p>
+              <p><strong>Precio: S/7.50</strong></p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://i.ibb.co/x0CT27d/w-1500-h-1500-fit-pad.webp" class="d-block w-100" alt="Galletas Field Navideñas Surtidas 300g" style="max-height:350px;object-fit:contain;cursor:pointer;" (click)="goToProductDetail(65)">
+            <div class="carousel-caption d-block bg-dark bg-opacity-50 rounded">
+              <h5>Galletas Field Navideñas Surtidas 300g</h5>
+              <p>Surtido especial de galletas Field con formas y decoraciones alusivas a la Navidad.</p>
+              <p><strong>Precio: S/10.50</strong></p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://i.ibb.co/jPfGcNX4/AIJ2gl-nz-LUt-Rh-AWdka5nvc-S0-CGW3i7-JEVNELHf-Kf-HVSz8aa2y-Ych-XJY1vx806-Sp-Lub-Rjx-We-Yt-fdi3nt-VZg.jpg" class="d-block w-100" alt="Combo Navideño Mass" style="max-height:350px;object-fit:contain;cursor:pointer;" (click)="goToProductDetail(66)">
+            <div class="carousel-caption d-block bg-dark bg-opacity-50 rounded">
+              <h5>Combo Navideño Mass</h5>
+              <p>Incluye Panetón D’Onofrio, Chocolate Sol del Cusco, Galletas Field y Coca-Cola 1.5L.</p>
+              <p><strong>Precio: S/39.90</strong></p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselNavidad" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselNavidad" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+    </div>
+    <!-- Fin Carrusel Navideño -->
+    <header class="catalog-hero">
+      <div class="hero-left">
+        <h1>Mercado Fresco</h1>
+        <p class="hero-sub">Encuentra productos frescos, envío rápido y los mejores precios en un solo lugar.</p>
+      </div>
+      <div class="hero-right">
+        <div class="promo">Envío gratis a partir de S/50</div>
+      </div>
+    </header>
+    <div class="products-header">
+      <div>
+        <h2>Productos</h2>
+        <p class="products-count">{{ filteredProducts.length }} productos encontrados</p>
+      </div>
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearchChange()" 
+          placeholder="Buscar productos..." 
+          class="search-input"
+        />
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    </div>
+
+    <div *ngIf="error" class="error-state">
+      <p>{{ error }}</p>
+      <p class="error-hint">Verifica que el backend esté corriendo en http://localhost:8080</p>
+      <button class="btn-reload" (click)="loadData()">🔄 Reintentar</button>
+    </div>
+
+    <div *ngIf="!loading && !error && filteredProducts.length === 0" class="empty-state">
+      <p>No se encontraron productos con los filtros actuales</p>
+      <button class="btn-reload" (click)="selectedCategory = 0; searchTerm = ''; priceRange = maxPrice; applyFilters()">
+        🔄 Limpiar filtros
+      </button>
+    </div>
+
+    <div class="products-grid" *ngIf="!loading && filteredProducts.length > 0">
+      <article class="product-card" *ngFor="let p of filteredProducts; trackBy: trackByProductId" (click)="goToProductDetail(p.id)" tabindex="0" role="button" (keydown.enter)="goToProductDetail(p.id)">
+        <div class="product-image">
+          <img 
+            [src]="getProductImage(p)" 
+            [alt]="p.name"
+            loading="lazy"
+          />
+          <!-- solo overlay 'Ver detalles' (pseudo-element ::after en CSS) -->
+        </div>
+        <div class="product-info">
+          <div class="product-category">{{ p.categoria || 'Sin categoría' }}</div>
+          <h4 class="product-title">{{ p.name }}</h4>
+          <p class="product-desc">Selección premium de calidad garantizada</p>
+          <!-- rating removed from card to keep design focused on detail -->
+          <div class="product-price">S/{{ p.price | number:'1.2-2' }}</div>
+          <div class="actions-row">
+            <button class="btn-add-cart" (click)="addToCart(p); $event.stopPropagation()" aria-label="Agregar {{p.name}} al carrito">
+            🛒 Agregar al carrito
+            </button>
+            <button class="btn-secondary" (click)="$event.stopPropagation(); goToProductDetail(p.id)">Ver detalles</button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+</div>
+
+<app-footer></app-footer>
